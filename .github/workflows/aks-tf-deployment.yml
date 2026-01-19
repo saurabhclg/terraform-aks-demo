@@ -15,6 +15,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     # 🔐 Approval gate happens here
     environment: ${{ github.event.inputs.environment }}
