@@ -1,0 +1,49 @@
+name: Terraform AKS Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select environment"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    # 🔐 Approval gate happens here
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.CLIENT_ID }}
+        tenant-id: ${{ secrets.TENANT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
+    - name: Terraform Init
+      run: |
+        cd environments/${{ github.event.inputs.environment }}
+        terraform init
+
+    - name: Terraform Plan
+      run: |
+        cd environments/${{ github.event.inputs.environment }}
+        terraform plan
+
+    - name: Terraform Apply
+      run: |
+        cd environments/${{ github.event.inputs.environment }}
+        terraform apply -auto-approve
