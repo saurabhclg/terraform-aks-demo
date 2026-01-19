@@ -22,12 +22,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin = "azure"
   }
   
-  addon_profile {
-    azure_keyvault_secrets_provider {
-      enabled = true
-    }
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
   }
-
+  
   tags = {
     environment = var.cluster_name
   }
