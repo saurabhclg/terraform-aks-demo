@@ -48,3 +48,12 @@ jobs:
       run: |
         cd environments/${{ github.event.inputs.environment }}
         terraform apply -auto-approve
+
+# This step is only setup for showing pipeline integration for fetching secrets from azure key-vault
+    - name: Download secrets for flux config
+      run: |
+        az keyvault secret download --name "flux-private-key" --vault-name "abb-app-secret" --file id_rsa
+        az keyvault secret download --name "flux-public-key" --vault-name "abb-app-secret" --file id_rsa.pub
+        cat id_rsa.pub
+        rm id_rsa id_rsa.pub
+        
